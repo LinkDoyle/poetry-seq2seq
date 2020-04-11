@@ -2,8 +2,8 @@
 #-*- coding:utf-8 -*-
 
 import codecs
-from rank_words import get_stopwords
-from data_utils import kw_train_path
+from .rank_words import get_stopwords
+from .data_utils import kw_train_path
 from sklearn.cluster import KMeans
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.feature_extraction.text import CountVectorizer
@@ -11,7 +11,7 @@ from sklearn.metrics import silhouette_score
 
 
 def get_cluster_labels(texts, tokenizer, n_clusters):
-    print "Clustering %d texts into %d groups ..." %(len(texts), n_clusters)
+    print("Clustering %d texts into %d groups ..." %(len(texts), n_clusters))
     vectorizer = CountVectorizer(tokenizer = tokenizer,
             stop_words = get_stopwords())
     transformer = TfidfTransformer()
@@ -45,5 +45,5 @@ if __name__ == '__main__':
         score = _eval_cluster(texts,
                 tokenizer = lambda x: x.split('\t'),
                 n_clusters = n)
-        print "n_clusters = %d, score = %f" %(n, score)
+        print("n_clusters = %d, score = %f" %(n, score))
 

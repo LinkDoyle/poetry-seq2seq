@@ -9,10 +9,10 @@ from collections import OrderedDict
 
 import tensorflow as tf
 
-from utils import SEP_TOKEN, PAD_TOKEN, VOCAB_SIZE, MODEL_DIR
-from data_utils import gen_batch_train_data
-from model import Seq2SeqModel
-from word2vec import get_word_embedding
+from .utils import SEP_TOKEN, PAD_TOKEN, VOCAB_SIZE, MODEL_DIR
+from .data_utils import gen_batch_train_data
+from .model import Seq2SeqModel
+from .word2vec import get_word_embedding
 
 # Data loading parameters
 tf.app.flags.DEFINE_boolean('cangtou_data', False, 'Use cangtou training data')
@@ -71,12 +71,12 @@ FLAGS = tf.app.flags.FLAGS
 def load_or_create_model(sess, model, saver, FLAGS):
     ckpt = tf.train.get_checkpoint_state(FLAGS.model_dir)
     if ckpt and tf.train.checkpoint_exists(ckpt.model_checkpoint_path):
-        print 'Reloading model parameters...'
+        print('Reloading model parameters...')
         model.restore(sess, saver, ckpt.model_checkpoint_path)
     else:
         if not os.path.exists(FLAGS.model_dir):
             os.makedirs(FLAGS.model_dir)
-        print 'Created new model parameters...'
+        print('Created new model parameters...')
         sess.run(tf.global_variables_initializer())
 
 
@@ -111,11 +111,11 @@ def train():
 
         start_time = time.time()
 
-        print 'Training...'
-        for epoch_idx in xrange(FLAGS.max_epochs):
+        print('Training...')
+        for epoch_idx in range(FLAGS.max_epochs):
             if model.global_epoch_step.eval() >= FLAGS.max_epochs:
-                print 'Training is already complete.', \
-                      'Current epoch: {}, Max epoch: {}'.format(model.global_epoch_step.eval(), FLAGS.max_epochs)
+                print('Training is already complete.', \
+                      'Current epoch: {}, Max epoch: {}'.format(model.global_epoch_step.eval(), FLAGS.max_epochs))
                 break
 
 
@@ -147,9 +147,9 @@ def train():
 
                     sents_per_sec = sents_seen / time_elapsed
 
-                    print 'Epoch ', model.global_epoch_step.eval(), 'Step ', model.global_step.eval(), \
+                    print('Epoch ', model.global_epoch_step.eval(), 'Step ', model.global_step.eval(), \
                           'Perplexity {0:.2f}'.format(avg_perplexity), 'Step-time ', step_time, \
-                          '{0:.2f} sents/s'.format(sents_per_sec)
+                          '{0:.2f} sents/s'.format(sents_per_sec))
 
                     loss = 0
                     sents_seen = 0
@@ -160,7 +160,7 @@ def train():
 
                 # Save the model checkpoint
                 if model.global_step.eval() % FLAGS.save_freq == 0:
-                    print 'Saving the model..'
+                    print('Saving the model..')
                     checkpoint_path = os.path.join(FLAGS.model_dir, FLAGS.model_name)
                     model.save(sess, saver, checkpoint_path, global_step=model.global_step)
                     json.dump(model.config,
@@ -169,17 +169,17 @@ def train():
 
             # Increase the epoch index of the model
             model.increment_global_epoch_step_op.eval()
-            print 'Epoch {0:} DONE'.format(model.global_epoch_step.eval())
+            print('Epoch {0:} DONE'.format(model.global_epoch_step.eval()))
 
 
-        print 'Saving the last model'
+        print('Saving the last model')
         checkpoint_path = os.path.join(FLAGS.model_dir, FLAGS.model_name)
         model.save(sess, saver, checkpoint_path, global_step=model.global_step)
         json.dump(model.config,
                   open('%s-%d.json' % (checkpoint_path, model.global_step.eval()), 'wb'),
                   indent=2)
 
-    print 'Training terminated'
+    print('Training terminated')
 
 
 def main(_):

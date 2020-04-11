@@ -58,7 +58,7 @@ def main():
 	with open(output_file_name, 'w+') as output_file:
 		for document in documents:
 			json_str = json.dumps(document)
-			print json_str
+			print(json_str)
 			output_file.write(json_str + '\n')
 
 if __name__ == '__main__':

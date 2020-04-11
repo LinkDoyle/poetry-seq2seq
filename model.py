@@ -70,7 +70,7 @@ class Seq2SeqModel:
         self.build_model()
 
     def build_model(self):
-        print 'Building model...'
+        print('Building model...')
 
         # Build encoder and decoder networks
         self.init_placeholders()
@@ -170,7 +170,7 @@ class Seq2SeqModel:
         return multi_cell
 
     def build_encoder(self):
-        print 'Building encoder...'
+        print('Building encoder...')
         with tf.variable_scope('encoder'):
             # embedded inputs: [batch_size, time_step, embedding_size]
             self.encoder_inputs_embedded = tf.nn.embedding_lookup(
@@ -201,7 +201,7 @@ class Seq2SeqModel:
 
                 self.encoder_last_state_fw, self.encoder_last_state_bw = self.encoder_last_state_fw_bw
 
-                encoder_last_state_zipped = zip(self.encoder_last_state_fw, self.encoder_last_state_bw)
+                encoder_last_state_zipped = list(zip(self.encoder_last_state_fw, self.encoder_last_state_bw))
                 encoder_last_state_list = [rnn.LSTMStateTuple(c=tf.concat([fw.c, bw.c], 1), h=tf.concat([fw.h, bw.h], 1))
                                            for fw, bw in encoder_last_state_zipped]
                 self.encoder_last_state = tuple(encoder_last_state_list)
@@ -357,14 +357,14 @@ class Seq2SeqModel:
 
             # Helper to feed inputs for greedy decoding: use the argmax of the output
             if self.predict_mode == 'sample':
-                print 'Building sample decoder...'
+                print('Building sample decoder...')
                 decoding_helper = seq2seq.SampleEmbeddingHelper(
                     start_tokens=start_tokens,
                     end_token=end_token,
                     embedding=lambda inputs: tf.nn.embedding_lookup(self.embedding, inputs)
                 )
             elif self.predict_mode == 'greedy':
-                print 'Building greedy decoder...'
+                print('Building greedy decoder...')
                 decoding_helper = seq2seq.GreedyEmbeddingHelper(
                     start_tokens=start_tokens,
                     end_token=end_token,
@@ -395,7 +395,7 @@ class Seq2SeqModel:
             raise NotImplementedError('{} mode is not recognized.'.format(self.mode))
 
     def build_decoder(self):
-        print 'Building decoder...'
+        print('Building decoder...')
         with tf.variable_scope('decoder'):
             # Building decoder_cell and decoder_initial_state
             self.decoder_cell, self.decoder_initial_state = self.build_decoder_cell()
@@ -431,7 +431,7 @@ class Seq2SeqModel:
 
         # Update the model
         self.updates = self.opt.apply_gradients(
-            zip(clip_gradients, trainable_params), global_step=self.global_step)
+            list(zip(clip_gradients, trainable_params)), global_step=self.global_step)
 
     def save(self, sess, saver, path, global_step=None):
         """
@@ -446,7 +446,7 @@ class Seq2SeqModel:
 
         """
         save_path = saver.save(sess, save_path=path, global_step=global_step)
-        print 'Model saved at {}'.format(save_path)
+        print('Model saved at {}'.format(save_path))
 
     def restore(self, sess, saver, path):
         """
@@ -460,7 +460,7 @@ class Seq2SeqModel:
 
         """
         saver.restore(sess, save_path=path)
-        print 'Model restored from {}'.format(path)
+        print('Model restored from {}'.format(path))
 
     def train(self, sess, encoder_inputs, encoder_inputs_length,
               decoder_inputs, decoder_inputs_length):

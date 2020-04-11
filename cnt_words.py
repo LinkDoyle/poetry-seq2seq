@@ -5,9 +5,9 @@ import os
 import codecs
 import json
 
-from utils import DATA_PROCESSED_DIR, uprintln
-from segment import Segmenter
-from quatrains import get_quatrains
+from .utils import DATA_PROCESSED_DIR, uprintln
+from .segment import Segmenter
+from .quatrains import get_quatrains
 
 _wc_path = os.path.join(DATA_PROCESSED_DIR, 'word_cnts.json')
 
@@ -22,7 +22,7 @@ def _gen_word_cnts():
             for seg in segs:
                 counters[seg] = counters[seg]+1 if seg in counters else 1
         if 0 == (idx+1)%10000:
-            print "[Word Count] %d/%d quatrains has been processed." %(idx+1, len(quatrains))
+            print("[Word Count] %d/%d quatrains has been processed." %(idx+1, len(quatrains)))
     with codecs.open(_wc_path, 'w', 'utf-8') as fout:
         json.dump(counters, fout)
 
@@ -47,7 +47,7 @@ def get_pop_quatrains(num = 100000):
     quatrains = get_quatrains()
     min_word_cnts = [_min_word_cnt(cnts, quatrain, segmenter) \
             for i, quatrain in enumerate(quatrains)]
-    indexes = sorted(range(len(quatrains)), key = lambda i: -min_word_cnts[i])
+    indexes = sorted(list(range(len(quatrains))), key = lambda i: -min_word_cnts[i])
     return [quatrains[index] for index in indexes[:min(num, len(indexes))]]
 
 if __name__ == '__main__':

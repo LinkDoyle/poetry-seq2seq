@@ -6,9 +6,9 @@ import json
 
 import tensorflow as tf
 
-from data_utils import prepare_batch_predict_data
-from model import Seq2SeqModel
-from vocab import get_vocab, ints_to_sentence
+from .data_utils import prepare_batch_predict_data
+from .model import Seq2SeqModel
+from .vocab import get_vocab, ints_to_sentence
 
 # Data loading parameters
 tf.app.flags.DEFINE_boolean('rev_data', True, 'Use reversed training data')
@@ -37,19 +37,19 @@ FLAGS = tf.app.flags.FLAGS
 
 #json loads strings as unicode; we currently still work with Python 2 strings, and need conversion
 def unicode_to_utf8(d):
-    return dict((key.encode("UTF-8"), value) for (key, value) in d.items())
+    return dict((key.encode("UTF-8"), value) for (key, value) in list(d.items()))
 
 
 def load_config(FLAGS):
     if FLAGS.model_path is not None:
         checkpoint_path = FLAGS.model_path
-        print 'Model path specified at: {}'.format(checkpoint_path)
+        print('Model path specified at: {}'.format(checkpoint_path))
     elif FLAGS.model_dir is not None:
         checkpoint_path = tf.train.latest_checkpoint(FLAGS.model_dir + '/')
-        print 'Model dir specified, using the latest checkpoint at: {}'.format(checkpoint_path)
+        print('Model dir specified, using the latest checkpoint at: {}'.format(checkpoint_path))
     else:
         checkpoint_path = tf.train.latest_checkpoint('model/')
-        print 'Model path not specified, using the latest checkpoint at: {}'.format(checkpoint_path)
+        print('Model path not specified, using the latest checkpoint at: {}'.format(checkpoint_path))
 
     FLAGS.model_path = checkpoint_path
 
@@ -58,7 +58,7 @@ def load_config(FLAGS):
     config = unicode_to_utf8(config_unicode)
 
     # Overwrite flags
-    for key, value in FLAGS.__flags.items():
+    for key, value in list(FLAGS.__flags.items()):
         config[key] = value
 
     return config
@@ -66,7 +66,7 @@ def load_config(FLAGS):
 
 def load_model(session, model, saver):
     if tf.train.checkpoint_exists(FLAGS.model_path):
-        print 'Reloading model parameters..'
+        print('Reloading model parameters..')
         model.restore(session, saver, FLAGS.model_path)
     else:
         raise ValueError(
@@ -120,7 +120,7 @@ class Seq2SeqPredictor:
 
             predicted_line = predicted_batch[0] # predicted is a batch of one line
             predicted_line_clean = predicted_line[:-1] # remove the end token
-            predicted_ints = map(lambda x: x[0], predicted_line_clean) # Flatten from [time_step, 1] to [time_step]
+            predicted_ints = [x[0] for x in predicted_line_clean] # Flatten from [time_step, 1] to [time_step]
             predicted_sentence = ints_to_sentence(predicted_ints)
 
             if FLAGS.rev_data:
@@ -132,16 +132,16 @@ class Seq2SeqPredictor:
 
 def main(_):
     KEYWORDS = [
-        u'楚',
-        u'收拾',
-        u'思乡',
-        u'相随'
+        '楚',
+        '收拾',
+        '思乡',
+        '相随'
     ]
 
     with Seq2SeqPredictor() as predictor:
         lines = predictor.predict(KEYWORDS)
         for line in lines:
-            print line
+            print(line)
 
 if __name__ == '__main__':
     tf.app.run()

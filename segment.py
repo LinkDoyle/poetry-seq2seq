@@ -5,7 +5,7 @@ import os
 import codecs
 import jieba
 
-from utils import DATA_RAW_DIR, DATA_PROCESSED_DIR
+from .utils import DATA_RAW_DIR, DATA_PROCESSED_DIR
 
 
 sxhy_raw = os.path.join(DATA_RAW_DIR, 'shixuehanying.txt')
@@ -53,7 +53,7 @@ class Segmenter:
         if not os.path.exists(sxhy_path):
             _gen_sxhy_dict()
 
-        print 'Loading sxhy dictionary into jieba.'
+        print('Loading sxhy dictionary into jieba.')
         jieba.load_userdict(sxhy_path)
 
         self._sxhy_dict = get_sxhy_dict()
@@ -82,5 +82,5 @@ class Segmenter:
                     segs.append(sentence[i:i+2])
                 else:
                     segs.extend(jieba.lcut(sentence[i:i+2], HMM=True, cut_all=True))
-            return filter(lambda seg: len(seg) > 0, segs)
+            return [seg for seg in segs if len(seg) > 0]
 

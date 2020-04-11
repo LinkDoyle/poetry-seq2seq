@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 #-*- coding:utf-8 -*-
 
-from utils import *
+from .utils import *
 import pypinyin
 
 
@@ -234,10 +234,10 @@ class RhymeUtil:
             [int]: A list of possible tones
 
         """
-        final_tones = pypinyin.pinyin(ch, style=pypinyin.FINALS_TONE3, heteronym=True, errors=u'default')[0] # select results for first and only char
-        tones = map(lambda final_tone: final_tone[-1], final_tones)
-        filtered_tones = filter(unicode.isdigit, tones)
-        tones_int = map(int, filtered_tones)
+        final_tones = pypinyin.pinyin(ch, style=pypinyin.FINALS_TONE3, heteronym=True, errors='default')[0] # select results for first and only char
+        tones = [final_tone[-1] for final_tone in final_tones]
+        filtered_tones = list(filter(str.isdigit, tones))
+        tones_int = list(map(int, filtered_tones))
 
         # deduplication
         deduped_tones = []
@@ -255,7 +255,7 @@ class RhymeUtil:
         Returns:
             [str]: A list of possible vowels
         """
-        vowels = pypinyin.pinyin(ch, style=pypinyin.FINALS, heteronym=True, errors=u'default')[0] # select results for first and only char
+        vowels = pypinyin.pinyin(ch, style=pypinyin.FINALS, heteronym=True, errors='default')[0] # select results for first and only char
         return vowels
 
     def get_possible_tone_types(self, ch):
@@ -290,8 +290,8 @@ class RhymeUtil:
             [int]: A list of possible rhyme categories
         """
         vowels = self.get_possible_vowels(ch)
-        rhyme_categories = map(self.get_rhyme_category, vowels)
-        filtered_categories = filter(None, rhyme_categories)
+        rhyme_categories = list(map(self.get_rhyme_category, vowels))
+        filtered_categories = [_f for _f in rhyme_categories if _f]
         return filtered_categories
 
     def can_rhyme(self, ch_list):
@@ -375,7 +375,7 @@ class RhymeEvaluator:
             return 0.
 
         rules = tone_rules[sentence_length]
-        scores = map(lambda rule: self.score(rule, sentences, output_split=output_split), rules)
+        scores = [self.score(rule, sentences, output_split=output_split) for rule in rules]
 
         if output_split:
             max_combined = max([score[0] for score in scores])
