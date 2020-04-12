@@ -5,6 +5,7 @@ import codecs
 import os
 import json
 import sys
+import functools
 
 from .utils import DATA_RAW_DIR, DATA_PROCESSED_DIR
 from .segment import Segmenter, get_sxhy_dict
@@ -45,10 +46,14 @@ def _text_rank(adjlist):
                 break
             else:
                 scores = new_scores
+            if i == 100:
+                break
         print("TextRank is done.")
     except KeyboardInterrupt:
         print("\nTextRank is interrupted.")
     sxhy_dict = get_sxhy_dict()
+    def cmp(a, b):
+        return (a > b) - (a < b) 
     def _compare_words(a, b):
         if a[0] in sxhy_dict and b[0] not in sxhy_dict:
             return -1
@@ -57,7 +62,7 @@ def _text_rank(adjlist):
         else:
             return cmp(b[1], a[1])
     words = sorted([(word,score) for word,score in list(scores.items())],
-            cmp = _compare_words)
+            key = functools.cmp_to_key(_compare_words))
     with codecs.open(rank_path, 'w', 'utf-8') as fout:
         json.dump(words, fout)
 

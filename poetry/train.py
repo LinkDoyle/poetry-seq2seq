@@ -56,7 +56,7 @@ tf.app.flags.DEFINE_boolean('sort_by_length', True, 'Sort pre-fetched minibatche
 tf.app.flags.DEFINE_boolean('use_fp16', False, 'Use half precision float16 instead of float32 as dtype')
 tf.app.flags.DEFINE_boolean('bidirectional', True, 'Use bidirectional encoder')
 tf.app.flags.DEFINE_string('train_mode', 'ground_truth', 'Decode helper to use for training')
-tf.app.flags.DEFINE_string('sampling_probability', 0.1, 'Probability of sampling from decoder output instead of using ground truth')
+tf.app.flags.DEFINE_float('sampling_probability', 0.1, 'Probability of sampling from decoder output instead of using ground truth')
 
 # TODO(sdsuo): Make start token and end token more robust
 tf.app.flags.DEFINE_integer('start_token', SEP_TOKEN, 'Start token')
@@ -89,7 +89,7 @@ def train():
 
     with tf.Session(config=config_proto) as sess:
         # Build the model
-        config = OrderedDict(sorted(FLAGS.__flags.items()))
+        config = OrderedDict(sorted([(k, v.value) for k, v in FLAGS.__flags.items()]))
         model = Seq2SeqModel(config, 'train')
 
         # Create a log writer object
@@ -163,9 +163,8 @@ def train():
                     print('Saving the model..')
                     checkpoint_path = os.path.join(FLAGS.model_dir, FLAGS.model_name)
                     model.save(sess, saver, checkpoint_path, global_step=model.global_step)
-                    json.dump(model.config,
-                              open('%s-%d.json' % (checkpoint_path, model.global_step.eval()), 'wb'),
-                              indent=2)
+                    with open('%s-%d.json' % (checkpoint_path, model.global_step.eval()), 'w') as f:
+                        json.dump(model.config, f, indent=2)
 
             # Increase the epoch index of the model
             model.increment_global_epoch_step_op.eval()
@@ -175,9 +174,8 @@ def train():
         print('Saving the last model')
         checkpoint_path = os.path.join(FLAGS.model_dir, FLAGS.model_name)
         model.save(sess, saver, checkpoint_path, global_step=model.global_step)
-        json.dump(model.config,
-                  open('%s-%d.json' % (checkpoint_path, model.global_step.eval()), 'wb'),
-                  indent=2)
+        with open('%s-%d.json' % (checkpoint_path, model.global_step.eval()), 'w') as f:
+            json.dump(model.config, f, indent=2)
 
     print('Training terminated')
 
