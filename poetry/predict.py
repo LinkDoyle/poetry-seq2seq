@@ -54,12 +54,12 @@ def load_config(FLAGS):
     FLAGS.model_path = checkpoint_path
 
     # Load config saved with model
-    config_unicode = json.load(open('%s.json' % FLAGS.model_path, 'rb'))
-    config = unicode_to_utf8(config_unicode)
+    with open('%s.json' % FLAGS.model_path, 'r') as f:
+        config = json.load(f)
 
     # Overwrite flags
-    for key, value in list(FLAGS.__flags.items()):
-        config[key] = value
+    for key, flag_value in list(FLAGS.__flags.items()):
+        config[key] = flag_value.value
 
     return config
 

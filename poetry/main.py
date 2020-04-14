@@ -10,7 +10,7 @@ import imp
 tf.app.flags.DEFINE_boolean('cangtou', False, 'Generate Acrostic Poem')
 
 imp.reload(sys)
-sys.setdefaultencoding('utf8')
+# sys.setdefaultencoding('utf8')
 
 def get_cangtou_keywords(input):
     assert(len(input) == 4)
