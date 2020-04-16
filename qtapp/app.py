@@ -2,6 +2,7 @@ import sys
 from PySide2.QtWidgets import QApplication, QMainWindow, QMessageBox
 from PySide2.QtCore import QObject, QFile, QTranslator, Slot, QStringListModel
 from .ui_mainwindow import Ui_MainWindow
+from .predictor import Flags, Seq2SeqPredictor
 
 # from poetry import predict
 import os
@@ -25,6 +26,9 @@ class MainWindow(QMainWindow):
         self.keyword_model = QStringListModel(self)
         self.keyword_model.setStringList(['人', '工', '智', '能'])
         ui.listview_keyword.setModel(self.keyword_model)
+
+        flags = Flags()
+        self.predictor = Seq2SeqPredictor(flags)
 
     @Slot(None, name='add_keyword')
     def add_keyword(self):
@@ -50,7 +54,8 @@ class MainWindow(QMainWindow):
             QMessageBox.warning(self, self.APP_NAME, self.tr(
                 'Please add some keywords first!'))
             return
-        poetry = '\n'.join(self.keyword_model.stringList())
+        keywords = self.keyword_model.stringList()
+        poetry = '\n'.join(self.predictor.predict(keywords))
         self.ui.label_poetry.setText(poetry)
 
 
