@@ -52,6 +52,7 @@ class Seq2SeqPredictor:
 
     def __init__(self, flags: Flags):
         self.flags = flags
+        self.flags = self.flags._replace(predict_mode='sample')
         # Load model config
         config = self._load_config()
 
