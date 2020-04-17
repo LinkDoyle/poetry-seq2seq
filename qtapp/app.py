@@ -37,9 +37,11 @@ class MainWindow(QMainWindow):
         text = lineedit_keyword.text()
         if text is not None or text != '':
             lineedit_keyword.clear()
-            self.keyword_model.insertRow(0)
-            index = self.keyword_model.index(0)
-            self.keyword_model.setData(index, text)
+            keyword_model = self.keyword_model
+            count = keyword_model.rowCount()
+            keyword_model.insertRow(count)
+            index = keyword_model.index(count)
+            keyword_model.setData(index, text)
 
     @Slot(None, name='delete_keyword')
     def delete_keyword(self):
