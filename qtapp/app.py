@@ -1,5 +1,7 @@
 import sys
 from itertools import cycle
+from typing import List
+
 from PySide2.QtWidgets import QApplication, QMainWindow, QMessageBox
 from PySide2.QtCore import QObject, QFile, QTranslator, Slot, QStringListModel
 from .ui_mainwindow import Ui_MainWindow
@@ -66,7 +68,18 @@ class MainWindow(QMainWindow):
         keywords = self.keyword_model.stringList()
         lines = self.predictor.predict(keywords)
         lines = [''.join(f'<b>{word}</b>' if word in keywords else word for word in line) for line in lines]
-        poetry = '\n'.join([f'<p>{line}{next(separators)}</p>' for line in lines])
+        lines = [f'{line}{next(separators)}' for line in lines]
+
+        def _fix_separators(_lines: List[str]) -> List[str]:
+            if len(_lines) > 0 and _lines[-1][-1] == '。':
+                return _lines
+            _lines[-1] = _lines[-1][:-1] + '。'
+
+            if len(_lines) >= 3 and _lines[-2][-1] == '。':
+                _lines[-2] = _lines[-2][:-1] + '，'
+            return _lines
+        lines = _fix_separators(lines)
+        poetry = '\n'.join([f'<p>{line}</p>' for line in lines])
         self.ui.label_poetry.setText(poetry)
 
         elapsed_time = time.time_ns() - begin_time
