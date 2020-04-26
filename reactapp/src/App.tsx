@@ -4,6 +4,7 @@ import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormControl from "@material-ui/core/FormControl";
 import Button from "@material-ui/core/Button";
+import ButtonGroup from "@material-ui/core/ButtonGroup";
 import Switch from "@material-ui/core/Switch";
 import TextField from "@material-ui/core/TextField";
 import * as Api from "./Api";
@@ -56,6 +57,8 @@ function App() {
     setKeywords(keywords);
   };
 
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {};
+
   return (
     <Grid
       container
@@ -81,21 +84,22 @@ function App() {
           alignItems="center"
           justify="center"
         >
+          <TextField
+            id="outlined-multiline-static"
+            label="关键词"
+            multiline
+            rows={8}
+            rowsMax={16}
+            defaultValue={DEFAULT_KEYWORDS.join("\n")}
+            placeholder="请添加关键词"
+            variant="outlined"
+            onChange={handleKeywordsChange}
+            style={{
+              minHeight: "100%",
+            }}
+          />
+
           <FormControl component="fieldset">
-            <TextField
-              id="outlined-multiline-static"
-              label="关键词"
-              multiline
-              rows={8}
-              rowsMax={16}
-              defaultValue={DEFAULT_KEYWORDS.join("\n")}
-              placeholder="请添加关键词"
-              variant="outlined"
-              onChange={handleKeywordsChange}
-              style={{
-                minHeight: "100%",
-              }}
-            />
             <FormGroup aria-label="position">
               <FormControlLabel
                 control={
@@ -110,14 +114,24 @@ function App() {
                 label="藏头诗"
                 labelPlacement="end"
               />
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={generate}
-                disabled={buttonGenerateDisabled}
-              >
-                生成
-              </Button>
+              <ButtonGroup>
+                <Button variant="contained" component="label">
+                  导入图片
+                  <input
+                    type="file"
+                    style={{ display: "none" }}
+                    accept="image/png, image/jpeg"
+                  />
+                </Button>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={generate}
+                  disabled={buttonGenerateDisabled}
+                >
+                  生成
+                </Button>
+              </ButtonGroup>
             </FormGroup>
           </FormControl>
         </Grid>
