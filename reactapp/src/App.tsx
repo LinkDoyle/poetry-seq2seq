@@ -139,7 +139,8 @@ function App() {
             return (
               <p>
                 {line.split("").map((c) => {
-                  return keywords[index].indexOf(c) !== -1 ? (
+                  return index < keywords.length &&
+                    keywords[index].indexOf(c) !== -1 ? (
                     <span
                       style={{
                         color: "rgb(27, 151, 200)",
