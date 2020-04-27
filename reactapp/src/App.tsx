@@ -27,10 +27,10 @@ function App() {
   const [generatedPoetry, setGeneratedPoetry] = React.useState(
     FAKE_GENERATED_POETRY
   );
+  const [imageSrc, setImageSrc] = React.useState("");
   const [buttonGenerateDisabled, setButtonGenerateDisabled] = React.useState(
     false
   );
-
   const [state, setState] = React.useState({
     checkedCangtou: false,
   });
@@ -57,7 +57,18 @@ function App() {
     setKeywords(keywords);
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {};
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(e.target.files);
+    if (e.target.files !== null) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      console.log(file);
+      reader.readAsDataURL(file);
+      reader.onload = (ev: ProgressEvent<FileReader>) => {
+        setImageSrc(reader.result as string);
+      };
+    }
+  };
 
   return (
     <Grid
@@ -120,7 +131,8 @@ function App() {
                   <input
                     type="file"
                     style={{ display: "none" }}
-                    accept="image/png, image/jpeg"
+                    accept="image/*"
+                    onChange={handleImageUpload}
                   />
                 </Button>
                 <Button
@@ -135,7 +147,18 @@ function App() {
             </FormGroup>
           </FormControl>
         </Grid>
-
+        <div style={{ alignContent: "center" }}>
+          <img
+            style={{
+              width: "80%",
+              height: "auto",
+              display: "block",
+              margin: "auto",
+            }}
+            src={imageSrc}
+            alt="请导入配图"
+          />
+        </div>
         <Grid
           item
           xs={8}
