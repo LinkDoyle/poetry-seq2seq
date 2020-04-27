@@ -10,14 +10,10 @@ import ButtonGroup from "@material-ui/core/ButtonGroup";
 import Switch from "@material-ui/core/Switch";
 import TextField from "@material-ui/core/TextField";
 import Container from "@material-ui/core/Container";
-import Card from "@material-ui/core/Card";
-import CardActionArea from "@material-ui/core/CardActionArea";
-import CardActions from "@material-ui/core/CardActions";
-import CardContent from "@material-ui/core/CardContent";
-import CardMedia from "@material-ui/core/CardMedia";
 
 import * as Api from "./Api";
 import Header from "./Header";
+import Preview from "./Preview";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -45,16 +41,17 @@ function App() {
   const classes = useStyles();
 
   const [keywords, setKeywords] = React.useState<string[]>(DEFAULT_KEYWORDS);
-  const [generatedPoetry, setGeneratedPoetry] = React.useState(
-    FAKE_GENERATED_POETRY
-  );
-  const [imageSrc, setImageSrc] = React.useState("");
   const [buttonGenerateDisabled, setButtonGenerateDisabled] = React.useState(
     false
   );
   const [state, setState] = React.useState({
     checkedCangtou: false,
   });
+
+  const [generatedPoetry, setGeneratedPoetry] = React.useState(
+    FAKE_GENERATED_POETRY
+  );
+  const [imageSrc, setImageSrc] = React.useState("");
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setState({ ...state, [e.target.name]: e.target.checked });
@@ -150,60 +147,11 @@ function App() {
           </FormControl>
         </Grid>
       </Grid>
-      <Card>
-        <CardActionArea>
-          <CardMedia
-            title="配图"
-            component="img"
-            image={imageSrc}
-            alt="请导入配图"
-            style={{
-              width: "100%",
-              height: "auto",
-              display: "block",
-              margin: "auto",
-              textAlign: "center",
-              fontSize: "24px",
-              padding: `${imageSrc === "" ? "10px 0" : 0}`,
-            }}
-          />
-        </CardActionArea>
-        <CardContent>
-          <div
-            style={{
-              fontFamily: "'Segoe UI',华文行楷",
-              fontSize: "24px",
-              lineHeight: 0.5,
-            }}
-          >
-            {generatedPoetry.map((line, index) => {
-              return (
-                <p>
-                  {line.split("").map((c) => {
-                    return index < keywords.length &&
-                      keywords[index].indexOf(c) !== -1 ? (
-                      <span
-                        style={{
-                          color: "rgb(27, 151, 200)",
-                        }}
-                      >
-                        {c}
-                      </span>
-                    ) : (
-                      <span>{c}</span>
-                    );
-                  })}
-                </p>
-              );
-            })}
-          </div>
-        </CardContent>
-
-        <CardActions>
-          <Button color="primary">分享</Button>
-          <Button color="primary">评分</Button>
-        </CardActions>
-      </Card>
+      <Preview
+        generatedPoetry={generatedPoetry}
+        keywords={keywords}
+        imageSrc={imageSrc}
+      />
     </Container>
   );
 }
