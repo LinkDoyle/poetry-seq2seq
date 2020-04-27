@@ -1,4 +1,6 @@
 import React from "react";
+
+import { Theme, createStyles, makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
@@ -7,8 +9,25 @@ import Button from "@material-ui/core/Button";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
 import Switch from "@material-ui/core/Switch";
 import TextField from "@material-ui/core/TextField";
+import Container from "@material-ui/core/Container";
+import Card from "@material-ui/core/Card";
+import CardActionArea from "@material-ui/core/CardActionArea";
+import CardActions from "@material-ui/core/CardActions";
+import CardContent from "@material-ui/core/CardContent";
+import CardMedia from "@material-ui/core/CardMedia";
+
 import * as Api from "./Api";
 import Header from "./Header";
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      "& > *": {
+        margin: `${theme.spacing(2)}px auto`,
+      },
+    },
+  })
+);
 
 const DEFAULT_KEYWORDS = ["叶", "马", "春风", "风雨", "酒", "山", "萧瑟", "晴"];
 const FAKE_GENERATED_POETRY = [
@@ -23,6 +42,8 @@ const FAKE_GENERATED_POETRY = [
 ];
 
 function App() {
+  const classes = useStyles();
+
   const [keywords, setKeywords] = React.useState<string[]>(DEFAULT_KEYWORDS);
   const [generatedPoetry, setGeneratedPoetry] = React.useState(
     FAKE_GENERATED_POETRY
@@ -71,30 +92,10 @@ function App() {
   };
 
   return (
-    <Grid
-      container
-      direction="column"
-      alignItems="center"
-      justify="center"
-      spacing={5}
-      style={{ minHeight: "100vh" }}
-    >
+    <Container fixed className={classes.root}>
       <Header />
-      <Grid
-        container
-        style={{ width: "100vw" }}
-        direction="row"
-        alignItems="center"
-        justify="center"
-        spacing={2}
-      >
-        <Grid
-          item
-          style={{ width: "200px" }}
-          spacing={2}
-          alignItems="center"
-          justify="center"
-        >
+      <Grid container spacing={2}>
+        <Grid item>
           <TextField
             id="outlined-multiline-static"
             label="关键词"
@@ -109,7 +110,8 @@ function App() {
               minHeight: "100%",
             }}
           />
-
+        </Grid>
+        <Grid item>
           <FormControl component="fieldset">
             <FormGroup aria-label="position">
               <FormControlLabel
@@ -147,54 +149,62 @@ function App() {
             </FormGroup>
           </FormControl>
         </Grid>
-        <div style={{ alignContent: "center" }}>
-          <img
+      </Grid>
+      <Card>
+        <CardActionArea>
+          <CardMedia
+            title="配图"
+            component="img"
+            image={imageSrc}
+            alt="请导入配图"
             style={{
-              width: "80%",
+              width: "100%",
               height: "auto",
               display: "block",
               margin: "auto",
+              textAlign: "center",
+              fontSize: "24px",
+              padding: `${imageSrc === "" ? "10px 0" : 0}`,
             }}
-            src={imageSrc}
-            alt="请导入配图"
           />
-        </div>
-        <Grid
-          item
-          xs={8}
-          style={{
-            width: "100%",
-            fontFamily: "'Segoe UI',华文行楷",
-            fontSize: "24px",
-            lineHeight: 0.5,
-          }}
-          spacing={0}
-          alignItems="center"
-          justify="center"
-        >
-          {generatedPoetry.map((line, index) => {
-            return (
-              <p>
-                {line.split("").map((c) => {
-                  return index < keywords.length &&
-                    keywords[index].indexOf(c) !== -1 ? (
-                    <span
-                      style={{
-                        color: "rgb(27, 151, 200)",
-                      }}
-                    >
-                      {c}
-                    </span>
-                  ) : (
-                    <span>{c}</span>
-                  );
-                })}
-              </p>
-            );
-          })}
-        </Grid>
-      </Grid>
-    </Grid>
+        </CardActionArea>
+        <CardContent>
+          <div
+            style={{
+              fontFamily: "'Segoe UI',华文行楷",
+              fontSize: "24px",
+              lineHeight: 0.5,
+            }}
+          >
+            {generatedPoetry.map((line, index) => {
+              return (
+                <p>
+                  {line.split("").map((c) => {
+                    return index < keywords.length &&
+                      keywords[index].indexOf(c) !== -1 ? (
+                      <span
+                        style={{
+                          color: "rgb(27, 151, 200)",
+                        }}
+                      >
+                        {c}
+                      </span>
+                    ) : (
+                      <span>{c}</span>
+                    );
+                  })}
+                </p>
+              );
+            })}
+          </div>
+        </CardContent>
+
+        <CardActions>
+          <Button color="primary">分享</Button>
+          <Button color="primary">评分</Button>
+        </CardActions>
+      </Card>
+    </Container>
   );
 }
 
