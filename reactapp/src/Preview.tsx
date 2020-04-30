@@ -25,8 +25,8 @@ export default function Preview(props: {
           image={imageSrc}
           alt="请导入配图"
           style={{
-            width: "100%",
-            height: "auto",
+            width: "auto",
+            maxHeight: "150px",
             display: "block",
             margin: "auto",
             textAlign: "center",

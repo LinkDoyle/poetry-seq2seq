@@ -14,6 +14,7 @@ import Container from "@material-ui/core/Container";
 import * as Api from "./Api";
 import Header from "./Header";
 import Preview from "./Preview";
+import Footer from "./Footer";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -152,6 +153,7 @@ function App() {
         keywords={keywords}
         imageSrc={imageSrc}
       />
+      <Footer/>
     </Container>
   );
 }
