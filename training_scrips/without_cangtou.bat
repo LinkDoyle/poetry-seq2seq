@@ -1,0 +1,1 @@
+python -m poetry.train --cangtou_data=False --batch_size=2048
