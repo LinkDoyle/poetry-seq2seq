@@ -6,12 +6,25 @@ import CardActionArea from "@material-ui/core/CardActionArea";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
+import Chip from "@material-ui/core/Chip";
+import { Theme, createStyles, makeStyles } from "@material-ui/core/styles";
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    imageKeywordList: {
+      "& > *": {
+        margin: theme.spacing(0.5),
+      },
+    },
+  })
+);
 
 export default function Preview(props: {
   generatedPoetry: string[];
   imageSrc: string;
   keywords: string[];
 }) {
+  const classes = useStyles();
   const generatedPoetry = props.generatedPoetry;
   const imageSrc = props.imageSrc;
   const keywords = props.keywords;
@@ -36,6 +49,13 @@ export default function Preview(props: {
         />
       </CardActionArea>
       <CardContent>
+        <div className={classes.imageKeywordList}>
+          <span>图片关键词：</span>
+          <Chip variant="outlined" label="关键词1" />
+          <Chip variant="outlined" label="关键词2" />
+          <Chip variant="outlined" label="关键词3" />
+          <Chip variant="outlined" label="关键词4" />
+        </div>
         <div
           style={{
             fontFamily: "'Segoe UI',华文行楷",
